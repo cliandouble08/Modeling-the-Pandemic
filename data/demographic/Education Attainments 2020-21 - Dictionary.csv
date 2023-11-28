@@ -1,0 +1,54 @@
+Code Name,Type,Display Name (if applicable),Summarized Variable Name
+STATEFP,Character string,,
+COUNTYFP,Character string,,
+COUNTYNS,Character string,,
+AFFGEOID,Character string,,
+GEOID,Character string,,
+NAME,Character string,,
+NAMELSAD,Character string,,
+STUSPS,Character string,,
+STATE_NAME,Character string,,
+LSAD,Character string,,
+ALAND,Double-precision decimal number,,
+AWATER,Double-precision decimal number,,
+POP_DENSITY,Double-precision decimal number,,
+DP02_0059E,Long integer,Population 25 years and over,population_25_years_and_over
+DP02_0059M,Long integer,Population 25 years and over*margin of error,population_25_years_and_overmargin_of_error
+DP02_0060E,Long integer,Population 25 years and over - Less than 9th grade,population_25_years_and_over_-_less_than_9th_grade
+DP02_0060M,Long integer,Population 25 years and over - Less than 9th grade*margin of error,population_25_years_and_over_-_less_than_9th_grademargin_of_error
+DP02_0060PE,Double-precision decimal number,Population 25 years and over - Less than 9th grade (%),population_25_years_and_over_-_less_than_9th_grade_%
+DP02_0060PM,Double-precision decimal number,Population 25 years and over - Less than 9th grade (%) *margin of error,population_25_years_and_over_-_less_than_9th_grade_%_margin_of_error
+DP02_0061E,Long integer,"Population 25 years and over - 9th to 12th grade, no diploma","population_25_years_and_over_-_9th_to_12th_grade,_no_diploma"
+DP02_0061M,Long integer,"Population 25 years and over - 9th to 12th grade, no diploma*margin of error","population_25_years_and_over_-_9th_to_12th_grade,_no_diplomamargin_of_error"
+DP02_0061PE,Double-precision decimal number,"Population 25 years and over - 9th to 12th grade, no diploma (%)","population_25_years_and_over_-_9th_to_12th_grade,_no_diploma_%"
+DP02_0061PM,Double-precision decimal number,"Population 25 years and over - 9th to 12th grade, no diploma (%) *margin of error","population_25_years_and_over_-_9th_to_12th_grade,_no_diploma_%_margin_of_error"
+DP02_0062E,Long integer,Population 25 years and over - High school graduate (includes equivalency),population_25_years_and_over_-_high_school_graduate_includes_equivalency
+DP02_0062M,Long integer,Population 25 years and over - High school graduate (includes equivalency)*margin of error,population_25_years_and_over_-_high_school_graduate_includes_equivalencymargin_of_error
+DP02_0062PE,Double-precision decimal number,Population 25 years and over - High school graduate (includes equivalency) (%),population_25_years_and_over_-_high_school_graduate_includes_equivalency_%
+DP02_0062PM,Double-precision decimal number,Population 25 years and over - High school graduate (includes equivalency) (%) *margin of error,population_25_years_and_over_-_high_school_graduate_includes_equivalency_%_margin_of_error
+DP02_0063E,Long integer,"Population 25 years and over - Some college, no degree","population_25_years_and_over_-_some_college,_no_degree"
+DP02_0063M,Long integer,"Population 25 years and over - Some college, no degree*margin of error","population_25_years_and_over_-_some_college,_no_degreemargin_of_error"
+DP02_0063PE,Double-precision decimal number,"Population 25 years and over - Some college, no degree (%)","population_25_years_and_over_-_some_college,_no_degree_%"
+DP02_0063PM,Double-precision decimal number,"Population 25 years and over - Some college, no degree (%) *margin of error","population_25_years_and_over_-_some_college,_no_degree_%_margin_of_error"
+DP02_0064E,Long integer,Population 25 years and over - Associate's degree,population_25_years_and_over_-_associates_degree
+DP02_0064M,Long integer,Population 25 years and over - Associate's degree*margin of error,population_25_years_and_over_-_associates_degreemargin_of_error
+DP02_0064PE,Double-precision decimal number,Population 25 years and over - Associate's degree (%),population_25_years_and_over_-_associates_degree_%
+DP02_0064PM,Double-precision decimal number,Population 25 years and over - Associate's degree (%) *margin of error,population_25_years_and_over_-_associates_degree_%_margin_of_error
+DP02_0065E,Long integer,Population 25 years and over - Bachelor's degree,population_25_years_and_over_-_bachelors_degree
+DP02_0065M,Long integer,Population 25 years and over - Bachelor's degree*margin of error,population_25_years_and_over_-_bachelors_degreemargin_of_error
+DP02_0065PE,Double-precision decimal number,Population 25 years and over - Bachelor's degree (%),population_25_years_and_over_-_bachelors_degree_%
+DP02_0065PM,Double-precision decimal number,Population 25 years and over - Bachelor's degree (%) *margin of error,population_25_years_and_over_-_bachelors_degree_%_margin_of_error
+DP02_0066E,Long integer,Population 25 years and over - Graduate or professional degree,population_25_years_and_over_-_graduate_or_professional_degree
+DP02_0066M,Long integer,Population 25 years and over - Graduate or professional degree*margin of error,population_25_years_and_over_-_graduate_or_professional_degreemargin_of_error
+DP02_0066PE,Double-precision decimal number,Population 25 years and over - Graduate or professional degree (%),population_25_years_and_over_-_graduate_or_professional_degree_%
+DP02_0066PM,Double-precision decimal number,Population 25 years and over - Graduate or professional degree (%) *margin of error,population_25_years_and_over_-_graduate_or_professional_degree_%_margin_of_error
+DP02_0067E,Long integer,Population 25 years and over - High school graduate or higher,population_25_years_and_over_-_high_school_graduate_or_higher
+DP02_0067M,Long integer,Population 25 years and over - High school graduate or higher*margin of error,population_25_years_and_over_-_high_school_graduate_or_highermargin_of_error
+DP02_0067PE,Double-precision decimal number,Population 25 years and over - High school graduate or higher (%),population_25_years_and_over_-_high_school_graduate_or_higher_%
+DP02_0067PM,Double-precision decimal number,Population 25 years and over - High school graduate or higher (%) *margin of error,population_25_years_and_over_-_high_school_graduate_or_higher_%_margin_of_error
+DP02_0068E,Long integer,Population 25 years and over - Bachelor's degree or higher,population_25_years_and_over_-_bachelors_degree_or_higher
+DP02_0068M,Long integer,Population 25 years and over - Bachelor's degree or higher*margin of error,population_25_years_and_over_-_bachelors_degree_or_highermargin_of_error
+DP02_0068PE,Double-precision decimal number,Population 25 years and over - Bachelor's degree or higher (%),population_25_years_and_over_-_bachelors_degree_or_higher_%
+DP02_0068PM,Double-precision decimal number,Population 25 years and over - Bachelor's degree or higher (%) *margin of error,population_25_years_and_over_-_bachelors_degree_or_higher_%_margin_of_error
+Shape__Area,Double-precision decimal number,,
+Shape__Length,Double-precision decimal number,,
