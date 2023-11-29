@@ -2,7 +2,7 @@
 
 ## Overview
 
-
+This study is a Mentor Advanced Project (MAP) at the Statistics Department of Grinnell College. 
 
 ## Steps
 
@@ -12,11 +12,19 @@ R packages used in this project were all listed in `package_prep.R`, which is al
 
 ### 1. Data Collection
 
+
+
 ### 2. Data Processing
+
+
 
 ### 3. Preliminary Analysis
 
+
+
 ### 4. Modeling/Analysis
+
+
 
 ## Additional Toolkits
 
