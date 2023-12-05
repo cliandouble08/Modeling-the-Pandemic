@@ -2,7 +2,8 @@
 required_packages <- c("broom", "ggplot2", "leaflet", "dplyr", "readr",  
                        "stringr", "tmaptools", "tmap", "sf", "lubridate", "maps", 
                        "gtable", "fastDummies", "purrr", "tidyr", 
-                       "reshape2", "mosaic", "shiny", "leaflet", "doParallel", "gganimate")
+                       "reshape2", "mosaic", "shiny", "leaflet", "doParallel", "gganimate", 
+                       "purrr", "viridis", "transformr", "tigris")
 
 # Function to install missing packages
 install_missing_packages <- function(packages) {

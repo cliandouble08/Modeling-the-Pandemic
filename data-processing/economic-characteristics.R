@@ -79,3 +79,10 @@ econ_char_data <- rbind(updated_raw_economic_characteristics_2020,
 econ_char_data <- econ_char_data %>% 
   mutate(geography = as.character(geography)) %>% 
   mutate(geography = substr(geography, nchar(geography) - 4, nchar(geography)))
+
+## By running stepwise regression using CFR as response variables, the five variables that have the most impact on the response variable are: 
+# civilian_noninst_under_19
+# mean_household_income
+# year
+# children_6_to_17
+# workers_16_over_other_means
