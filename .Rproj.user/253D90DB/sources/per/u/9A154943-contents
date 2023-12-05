@@ -1,0 +1,67 @@
+# Standardize affected_local_code format
+policy_data$affected_local_code <- sprintf("%05d", as.integer(policy_data$affected_local_code))
+
+# Filter data for analysis
+local_policy <- policy_data %>% 
+  filter(policy_category %in% c("Social distancing", "Face mask"), 
+         nchar(as.character(affected_local_code)) == 5, 
+         affected_level_gov == "Local")
+
+# Date formatting
+local_policy$issued_date <- ymd(local_policy$issued_date)
+local_policy$start_date <- ymd(local_policy$start_date)
+local_policy$actual_end_date <- ymd(local_policy$actual_end_date)
+local_policy$anticipated_end_date <- ymd(local_policy$anticipated_end_date)
+
+# Create a summary dataframe for policy
+years <- c(2020, 2021, 2022, 2023)
+months <- 1:12
+date_grid <- expand.grid(year = years, month = months)
+unique_local_codes <- unique(local_policy$affected_local_code)
+local_codes_df <- data.frame(affected_local_code = unique_local_codes)
+expanded_date_grid <- full_join(date_grid, local_codes_df, by = character(0))
+
+# Initialize columns for policy effect, type and category counts
+expanded_date_grid$policy_type <- 0
+expanded_date_grid$policy_category <- 0
+expanded_date_grid$Restricting <- 0
+expanded_date_grid$Other <- 0
+expanded_date_grid$Relaxing <- 0
+expanded_date_grid$NA_Type <- 0
+expanded_date_grid$Social_Distancing <- 0
+expanded_date_grid$Face_Mask <- 0
+
+# Loop through each row in local_policy
+for (i in 1:nrow(local_policy)) {
+  policy_row <- local_policy[i, ]
+  issued_date <- policy_row$issued_date
+  start_date <- policy_row$start_date
+  end_date <- policy_row$actual_end_date
+  local_code <- policy_row$affected_local_code
+  policy_type_val <- ifelse(policy_row$policy_type == "Relaxing", -1, +1)
+  policy_category_val <- ifelse(policy_row$policy_category == "Face mask", +1, -1)
+  
+  # Check if the policy affects any month in date_grid
+  for (j in 1:nrow(date_grid)) {
+    date_row <- date_grid[j, ]
+    year_month_start <- as.Date(paste(date_row$year, date_row$month, "01", sep = "-"))
+    year_month_end <- ceiling_date(year_month_start, "month") - days(1)
+    
+    # Handle NA values in dates
+    if (!is.na(end_date) && !is.na(start_date) && !(end_date < year_month_start || start_date > year_month_end)) {
+      summary_index <- which(expanded_date_grid$affected_local_code == local_code & 
+                               expanded_date_grid$year == date_row$year & 
+                               expanded_date_grid$month == date_row$month)
+      
+      if (length(summary_index) == 1) {
+        expanded_date_grid[summary_index, "policy_type"] <- expanded_date_grid[summary_index, "policy_type"] + policy_type_val
+        expanded_date_grid[summary_index, "policy_category"] <- expanded_date_grid[summary_index, "policy_category"] + policy_category_val
+        expanded_date_grid[summary_index, policy_row$policy_type] <- expanded_date_grid[summary_index, policy_row$policy_type] + 1
+        expanded_date_grid[summary_index, policy_row$policy_category] <- expanded_date_grid[summary_index, policy_row$policy_category] + 1
+      }
+    }
+  }
+}
+
+# Final summary dataframe
+local_policy_summary <- expanded_date_grid

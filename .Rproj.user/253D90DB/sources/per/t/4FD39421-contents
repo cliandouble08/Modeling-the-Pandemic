@@ -1,0 +1,84 @@
+# Select rows that have 5 digits in affected_area_code column (counties)
+policy_data$affected_local_code <- sprintf("%05d", as.integer(policy_data$affected_local_code))
+local_policy <- policy_data %>% 
+  filter(policy_category %in% c("Social distancing", "Face mask"), 
+         nchar(as.character(affected_local_code)) == 5, 
+         affected_level_gov == "Local")
+
+# Make sure the date format is legal for following code
+local_policy$issued_date <- ymd(local_policy$issued_date)
+local_policy$start_date <- ymd(local_policy$start_date)
+local_policy$actual_end_date <- ymd(local_policy$actual_end_date)
+local_policy$anticipated_end_date <- ymd(local_policy$anticipated_end_date)
+
+# Create a summary dataframe for policy -----
+
+# Create a sequence of months with specific years
+years <- c(2020, 2021, 2022, 2023)
+months <- 1:12
+date_grid <- expand.grid(year = years, month = months)
+
+# Extract unique affected_local_code from local_policy
+unique_local_codes <- unique(local_policy$affected_local_code)
+
+# Create a data frame from unique_local_codes
+local_codes_df <- data.frame(affected_local_code = unique_local_codes)
+
+# Create an expanded grid that includes every combination of year, month, and affected_local_code
+expanded_date_grid <- full_join(date_grid, local_codes_df, by = character(0))
+
+# Initialize policy_type and policy_category columns
+expanded_date_grid$policy_type <- 0
+expanded_date_grid$policy_category <- 0
+expanded_date_grid$Restricting <- 0
+expanded_date_grid$Other <- 0
+expanded_date_grid$Relaxing <- 0
+expanded_date_grid$NA_Type <- 0
+expanded_date_grid$Social_Distancing <- 0
+expanded_date_grid$Face_Mask <- 0
+
+# Initialize the new summary dataframe
+local_policy_summary <- expanded_date_grid
+
+# Loop through each row in local_policy to calculate policy effects
+for (i in 1:nrow(local_policy)) {
+  policy_row <- local_policy[i, ]
+  
+  # Extract relevant dates and policy type/category
+  issued_date <- policy_row$issued_date
+  start_date <- policy_row$start_date
+  end_date <- policy_row$actual_end_date
+  local_code <- policy_row$affected_local_code
+  
+  # Relaxing == -1
+  # Restricting == +1
+  policy_type <- ifelse(policy_row$policy_type == "Relaxing", -1, +1)
+  
+  # Facemask == +1
+  # Social distancing ==  -1
+  policy_category <- ifelse(policy_row$policy_category == "Face mask", +1, -1)
+  
+  # Check if the policy affects any month in date_grid
+  for (j in 1:nrow(date_grid)) {
+    date_row <- date_grid[j, ]
+    year_month_start <- as.Date(paste(date_row$year, date_row$month, "01", sep = "-"))
+    year_month_end <- ceiling_date(year_month_start, "month") - days(1)
+    
+    if (!(end_date < year_month_start || start_date > year_month_end)) {
+      summary_index <- which(local_policy_summary$affected_local_code == local_code & 
+                               local_policy_summary$year == date_row$year & 
+                               local_policy_summary$month == date_row$month)
+      
+      if (length(summary_index) == 1) {
+        local_policy_summary[summary_index, policy_row$policy_type] <- local_policy_summary[summary_index, policy_row$policy_type] + 1
+        local_policy_summary[summary_index, policy_row$policy_category] <- local_policy_summary[summary_index, policy_row$policy_category] + 1
+      }
+    }
+  }
+}
+
+# Recovered processed file from 2023-11-28
+local_policy_summary <- read_csv("data/recovered-data/local_policy_summary.csv")
+local_policy <- read_csv("data/recovered-data/local_policy.csv")
+selected_education <- read_csv("data/recovered-data/selected_education.csv")
+updated_education <- read_csv("data/recovered-data/updated_education.csv")

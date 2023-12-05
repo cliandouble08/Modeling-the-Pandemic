@@ -1,0 +1,2 @@
+# Retrieved udpated_education dataframe from Github failure
+education_df <- updated_education
