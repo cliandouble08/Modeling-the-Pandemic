@@ -2,13 +2,13 @@
 
 ## Overview
 
-This study is a Mentor Advanced Project (MAP) at the Statistics Department of Grinnell College. 
+
 
 ## Directories
 
 | Directory | Description                                      |
 | :-------- | :----------------------------------------------- |
-| .config   | Github configuration files                       |
+| .config   | Configuration files                              |
 | build     | Main working directory for analysis and modeling |
 | data      | Raw data files and data processing scripts       |
 | dep       | Dependence files for all projects                |
@@ -18,7 +18,13 @@ This study is a Mentor Advanced Project (MAP) at the Statistics Department of Gr
 
 ## Usage
 
-
+1. Install GitHub Desktop from https://docs.github.com/en/desktop/installing-and-authenticating-to-github-desktop/installing-github-desktop
+2. Clone this project to the user's desktop from https://github.com/cliandouble08/modeling-the-pandemic.git 
+   * The cloned project can be updated by pulling updates from GitHub repository using GitHub Desktop. 
+3. Open the cloned project from the cloning directory. 
+4. Open "./modeling-the-pandemic.Rproj" before running files in the directory to avoid errors in readr functions. 
+5. Open and run "./build/main.R" to load necessary data files and R packages.  
+   * Alternative: load "./.RData" to access all history objects and packages. 
 
 ## Roadmap
 
