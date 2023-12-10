@@ -23,8 +23,19 @@
    * The cloned project can be updated by pulling updates from GitHub repository using GitHub Desktop. 
 3. Open the cloned project from the cloning directory. 
 4. Open "./modeling-the-pandemic.Rproj" before running files in the directory to avoid errors in readr functions. 
+   * R package installation/loading script is embedded in "./build" files, please run the line `source("./dep/file-directory")` specific to each file to avoid unnecessary package installation and loading. 
+   * R packages that are consistently loaded for all files are: `readr`, `tidyr`, `dplyr`, `ggplot2`
 5. Open and run "./build/main.R" to load necessary data files and R packages.  
    * Alternative: load "./.RData" to access all history objects and packages. 
+
+### Notes for specific files
+
+* "./build/main.R" is the primary R file for data analysis post-data-cleaning. Please *only* visit this file if you do not intend to view anything other than the actual analysis. 
+* "./dep/package-prep.R" is a generic R template for package installation/loading. You may use it by: 
+  1. Download the R script to your directory. 
+  2. Edit the package list `required_packages` to include your desired packages. 
+  3. Load the packages by running/embedding `source(package-prep-script-directory)` in your code. 
+  4. The script will automatically load the latest version for all listed R packages by default. If a package has not been installed, the script will detect and install the missing package automatically. 
 
 ## Roadmap
 
