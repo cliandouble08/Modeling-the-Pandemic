@@ -30,7 +30,17 @@
 
 ### 1. Data Collection
 
+The project used the following data files from corresponding sources: 
 
+| Data type   | Data                              | Source                                                       | Link                                                         |
+| ----------- | --------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| COVID-19    | Cases and Deaths                  | New York Times                                               | https://github.com/nytimes/covid-19-data.git                 |
+| COVID-19    | Hospital capacity                 |                                                              |                                                              |
+| Policy      | Policy mapping                    | Katz, R., Toole, K., Robertson, H. *et al.* Open data for COVID-19 policy analysis and mapping. *Sci Data* **10**, 491 (2023). | https://doi.org/10.1038/s41597-023-02398-3                   |
+| Demographic | Demographic and housing estimates | American Community Survey (ACS), U.S. Census Bureau          | https://data.census.gov/                                     |
+| Demographic | Education attainments             | American Community Survey (ACS), U.S. Census Bureau          | https://data.census.gov/                                     |
+| Demographic | Housing Price Index (HPI)         | Federal Housing Finance Agency                               | https://www.fhfa.gov/DataTools/Downloads/Pages/House-Price-Index-Datasets.aspx |
+|             |                                   |                                                              |                                                              |
 
 ### 2. Data Processing
 
@@ -48,10 +58,14 @@
 
 ### Configure Git Large File Storage (LFS)
 
-Large data files were uploaded through LFS. Visit https://docs.github.com/en/repositories/working-with-files/managing-large-files for further instructions. 
+Large data files were uploaded through LFS. 
+
+Visit https://docs.github.com/en/repositories/working-with-files/managing-large-files for further instructions. 
 
 ## Contact
 
-Genxuan (Cameron) Lian - liancame@grinnell.edu
+Cameron Lian - liancame@grinnell.edu
+
+Instructor: Prof. Shonda Kuiper - kuipers@grinnell.edu
 
 Project Link: https://github.com/cliandouble08/modeling-the-pandemic.git
