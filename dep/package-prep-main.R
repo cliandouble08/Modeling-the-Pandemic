@@ -1,5 +1,5 @@
 # List of required packages
-required_packages <- c("readr", "tidyr", "dplyr", "ggplot2")
+required_packages <- c("readr", "tidyr", "dplyr", "ggplot2", "covidcast")
 
 # Function to install missing packages
 install_missing_packages <- function(packages) {
