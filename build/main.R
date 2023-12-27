@@ -19,4 +19,7 @@ df_use <- df_updated %>%
   select(-c(county, state, month_day)) %>% 
   mutate(
     deaths_per_1e6 = deaths / POPESTIMATE2019
-      ) 
+      ) %>% 
+  rename(
+    case_fatality_rate = cfr
+  )

@@ -1,0 +1,66 @@
+---
+title: "Analysis Report"
+author: "Cameron Lian"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+# Document configuration
+require(mosaic)
+knitr::opts_knit$set(root.dir = "D:/OneDrive - Personal/OneDrive/Desktop/110 2023 Fall Semester/modeling-the-pandemic")
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+# Required packages
+setwd("D:/OneDrive - Personal/OneDrive/Desktop/110 2023 Fall Semester/modeling-the-pandemic")
+source("./dep/package-prep-main.R")
+
+# Load data files
+df <- read_csv("data/data-files/merged_processed_data.csv") %>% 
+  mutate(fips = as.character(fips))
+
+county_census_updated <- county_census %>% 
+  select(FIPS, POPESTIMATE2019) %>% 
+  mutate(FIPS = as.character(FIPS))
+```
+
+```{r, include=FALSE}
+# Additional data processing
+df_updated <- merge(x = county_census_updated, 
+                    y = df, 
+                    by.x = "FIPS", 
+                    by.y = "fips")
+
+df_use <- df_updated %>% 
+  select(-c(county, state, month_day)) %>% 
+  mutate(
+    deaths_per_1e6 = deaths / POPESTIMATE2019
+      ) %>% 
+  rename(
+    case_fatality_rate = cfr
+  )
+```
+
+## Aims
+
+### Examining the Inflated Fatality Rate
+
+
+
+## Rstudio Session Information
+```{r, echo=FALSE}
+sessionInfo()  # could use devtools::session_info() if you prefer that
+```
