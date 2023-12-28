@@ -38,6 +38,9 @@ split_policy <- function(start_date, end_date) {
 updated_policy_data <- updated_policy_data %>%
   mutate(policy_years_months = map2(start_date, actual_end_date, split_policy)) %>%
   unnest(policy_years_months)
+write.csv(updated_policy_data, 
+          file = "data/data-files/raw_policy_data.csv", 
+          row.names = FALSE)
 
 # Create a summary dataframe
 # Filter the data to include only the relevant policies 
