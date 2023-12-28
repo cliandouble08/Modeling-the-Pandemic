@@ -1,0 +1,339 @@
+---
+title: "Analysis Report"
+author: "Cameron Lian"
+output: 
+  html_document:
+    theme: 
+      bootswatch: zephyr
+    toc: TRUE
+    toc_depth: 3
+    fig_caption: TRUE
+    fig_height: 8
+    fig_width: 10
+    
+  github_document: 
+    theme: 
+      bootswatch: zephyr
+    toc: TRUE
+    toc_depth: 3
+    fig_caption: TRUE
+    fig_height: 8
+    fig_width: 10
+---
+
+```{r configuration, setup, include=FALSE}
+# Document configuration
+require(mosaic)
+knitr::opts_knit$set(root.dir = "D:/OneDrive - Personal/OneDrive/Desktop/110 2023 Fall Semester/modeling-the-pandemic")
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+```{r root_diretory, warning=FALSE, message=FALSE, include=FALSE}
+# Required packages
+setwd("D:/OneDrive - Personal/OneDrive/Desktop/110 2023 Fall Semester/modeling-the-pandemic")
+source("./dep/package-prep-main.R")
+```
+
+```{r additional_data_processing, include=FALSE}
+# Load data files
+df <- read_csv("data/data-files/merged_processed_data.csv") %>% 
+  mutate(fips = as.character(fips))
+
+# Add a column of county total population estimated from county census data
+# source: https://www.census.gov/data/tables/time-series/demo/popest/2020s-counties-detail.html
+county_census_2019 <- read_csv("data/data-files/co-est2019-alldata.csv")
+county_census_2022 <- read_csv("data/data-files/co-est2022-alldata.csv")
+
+county_census <- merge(
+  county_census_2019,
+  county_census_2022, 
+  by = c("STATE", "COUNTY")
+)
+
+county_census_updated <- county_census %>% 
+  # combined the STATE and COUNTY codes to FIPS
+  mutate(
+    STATE = as.character(STATE), 
+    COUNTY = as.character(COUNTY), 
+    FIPS = str_c(STATE, COUNTY, sep = "")
+  ) %>% 
+  # Rearrange FIPS to be the first column of the dataframe
+  select(FIPS, everything()) %>%
+  # Select columns from the newly created dataframe for the following merging
+  select(
+    FIPS, 
+    # 7/1/2016 resident total population estimate 
+    POPESTIMATE2016, 
+    # 7/1/2017 resident total population estimate 
+    POPESTIMATE2017, 
+    # 7/1/2018 resident total population estimate 
+    POPESTIMATE2018, 
+    # 7/1/2019 resident total population estimate
+    POPESTIMATE2019, 
+    # 7/1/2020 resident total population estimate
+    POPESTIMATE2020, 
+    # 7/1/2020 resident total population estimate
+    POPESTIMATE2021, 
+    # Deaths in period 7/1/2015 to 6/30/2016 
+    DEATHS2016, 
+    # Deaths in period 7/1/2016 to 6/30/2017
+    DEATHS2017, 
+    # Deaths in period 7/1/2017 to 6/30/2018
+    DEATHS2018, 
+    # Deaths in period 7/1/2018 to 6/30/2019
+    DEATHS2019, 
+    # Deaths in period 7/1/2019 to 6/30/2020
+    DEATHS2020, 
+    # Deaths in period 7/1/2020 to 6/30/2021
+    DEATHS2021
+    ) %>% 
+  mutate(
+    # All fatality rates are calculated as deaths per 1e6 population
+    fatality_2016 = DEATHS2016 / (POPESTIMATE2016 / 1e6), 
+    fatality_2017 = DEATHS2017 / (POPESTIMATE2017 / 1e6), 
+    fatality_2018 = DEATHS2018 / (POPESTIMATE2018 / 1e6), 
+    fatality_2019 = DEATHS2019 / (POPESTIMATE2019 / 1e6), 
+    fatality_2020 = DEATHS2020 / (POPESTIMATE2020 / 1e6), 
+    fatality_2021 = DEATHS2021 / (POPESTIMATE2021 / 1e6)
+  ) %>%
+  rowwise() %>%
+  mutate(
+    fatality_3yrs = mean(c_across(c(fatality_2016, 
+                                    fatality_2017, 
+                                    fatality_2018)), 
+                         na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Merge the census dataframe with the working dataframe
+df_updated <- merge(x = county_census_updated, 
+                    y = df, 
+                    by.x = "FIPS", 
+                    by.y = "fips")
+
+# df_use is the dataframe that will be used for data analysis
+df_use <- df_updated %>% 
+  select(-c(county, state, month_day)) %>% 
+  mutate(
+    COVID_fatality = ifelse(year == 2019, 
+                            deaths / (POPESTIMATE2019 / 1e6), 
+                            deaths / (POPESTIMATE2019 / 1e6)), 
+    fatality_difference = ifelse(year == 2019, 
+                                 fatality_2019 - COVID_fatality, 
+                                 fatality_2020 - COVID_fatality), 
+    fatality_to_last_yrs = fatality_difference - fatality_3yrs
+    )%>% 
+  select(fatality_to_last_yrs, everything()) %>% 
+  rename(
+    case_fatality_rate = cfr
+  )
+```
+
+## Introduction
+
+### Central Questions
+
+1. 
+
+## Examining the Inflated Case Fatality Rate
+
+  The unexpected coronavirus disease 2019 (COVID-19) caught the world unprepared and suffered from extensive tolls of infection and death that many would considered inconcievable in the modern era since the Great Influenza of 1918. As of 31 December 2021, more than 287 million confirmed cases of COVID-19 has been reported to the World Health Organization (WHO), including 5.4 millions deaths (https://covid19.who.int/), while more than 52 million cases with  more than 0.8 million deaths emerged in the United States alone (https://coronavirus.jhu.edu/data/). 
+
+  Since its first outbreak in Wuhan, China in December of 2019, people spent extraordinary efforts to collect COVID-19 data for tracking its progression and impact, yet validation of the data has been riddled with challenges. COVID-19 infections are asymptomatic while most patients suffer from mild to moderate illness with respiratory and flu-like symptoms, which are usually not severe enough to cause critical conditions or even death. However, becuase of its prevalence across the world, it is compelling to attribute many patient deaths to COVID-19 for conveninence and funding-related issues. 
+
+  Despite the intimidating data on COVID-19 case fatality rate of more than 5%, systempatic information on immediate and underlying cause of death directly attributed to COVID-19 are scarce, with a few reports described damage to organs on the morphological level and one study reported fatal pulmonary thromboembolism in few cases.
+  
+  The few reports align with the high median age of 70 years for COVID-19 deaths {Elezkurtaj, 2021 #614}, at which age a person's physiological functions decline so much that is no longer sufficient to defend against the highly-infectious virus. 
+
+```{r data_inflated_fatality, echo=FALSE}
+df_summary <- df_use %>% 
+  group_by(year) %>% 
+  summarise(
+    n_fatality_diff_negative = sum(fatality_to_last_yrs < 0, na.rm = TRUE),
+    n_fatality_diff_positive = sum(fatality_to_last_yrs > 0, na.rm = TRUE)
+  ) %>% 
+  ungroup() %>% 
+  mutate(
+    year = as.factor(year)
+  )
+
+df_long <- df_summary %>%
+  pivot_longer(
+    cols = starts_with("n_"),
+    names_to = "variable",
+    values_to = "value"
+  ) %>% 
+  mutate(variable = ifelse(variable == "n_fatality_diff_negative", "Negative", "Positive"))
+```
+
+```{r plot_inflated_fatality, fig.cap="Figure. Difference in base fatality rate of COVID-19 era than pre-COVID-19 era. Base fatality rate refers to the fatality rate excluding those whose death was attributed to COVID-19.", echo=FALSE}
+ggplot(data = df_long, 
+       mapping = aes(x = year, 
+                     y = value, 
+                     fill = variable)) +
+  geom_col(position = position_dodge2(preserve = "single", 
+                                      padding = 0.1)) +
+  geom_text(aes(y = value, 
+                label = value), 
+            position = position_dodge2(preserve = "single", 
+                                       width = 0.9, padding = 0.1), 
+            vjust = -0.5) +
+  theme_pubr() +
+  labs(
+    fill = NULL, 
+    x = "Year", 
+    y = str_wrap("Base fatality difference from pre-COVID 3-year average (per 1,000,000 population)", 
+                 width = 50)
+    )
+```
+
+## Understanding of policy trends
+
+  The policy data was acquired from the COVID Analysis and Mapping of Policy (COVID AMP) dataset {Katz, 2023 #332}. 
+  
+```{r policy_data_processing, include=FALSE, echo=FALSE}
+df_policy <- read_csv("data/data-files/raw_policy_data.csv")
+summary_policy_type <- df_policy %>%
+  group_by(policy_type) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+df_policy_updated <- df_policy %>% 
+  mutate(
+    issued_date = ymd(issued_date)
+      )
+```
+
+```{r policy_data, include=FALSE, echo = FALSE}
+policy_summary <- df_policy_updated %>% 
+  group_by(policy_year, policy_month, policy_category, policy_type) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  mutate(
+    ymd = as.Date(paste(policy_year, policy_month, "01", sep = "-"), 
+                   format = "%Y-%m-%d")
+  )
+
+total_count <- policy_summary %>% 
+  group_by(ymd, policy_type) %>% 
+  summarise(
+    total_count = sum(count)
+  )
+
+policy_summary_updated <- merge(policy_summary, 
+                                total_count, 
+                                by = c("ymd", "policy_type")) %>% 
+  mutate(
+    percentage = count / total_count
+  ) %>% 
+  filter(policy_type %in% c("Relaxing", "Restricting"), 
+         policy_year %in% c("2020", "2021"))
+```
+
+```{r policy_distribution_by_month, fig.cap="Figure. Policy distribution by category and month."}
+ggplot(data = policy_summary_updated, 
+       mapping = aes(x = ymd, 
+                     y = count, 
+                     fill = policy_category)) +
+  geom_col() +
+  # scale_y_log10() +
+  # geom_text(aes(label = round(percentage, digits = 2)), 
+  #           size = 2, col = "white") +
+  facet_grid(.~ policy_type) +
+  labs(x = element_blank(), 
+       y = "Count") +
+  theme(
+    legend.position = "bottom", 
+    axis.text.x = element_text(angle = 45, 
+                               hjust = 1)
+        )
+```
+
+```{r plot}
+ggplot(data = policy_summary_updated, 
+       mapping = aes(x = ymd, 
+                     y = percentage, 
+                     fill = policy_category)) +
+  geom_col() +
+  # geom_text(aes(label = round(percentage, digits = 2)), 
+  #           size = 2, col = "white") +
+  facet_grid(.~ policy_type) +
+  labs(x = element_blank(), 
+       y = "Percentage") +
+  theme(
+    legend.position = "bottom", 
+    axis.text.x = element_text(angle = 45, 
+                               hjust = 1)
+        )
+```
+
+  Among all relaxation categories, "Social distancing" and "Authorization and enforcement" represent the majority of all policies issued. On the other hand, "Face mask" represents a greater portion of issued policies than "Authorization and enforcement",, which could be inferred by the nature of authorization policies (Figure 3). Interestingly, an increasing number of travel restriction policies was issued onset July 2021, of which period many would not consider as the primary surge of COVID-19 cases. 
+
+```{r authorization_policy}
+policy_summary <- df_policy %>% 
+  group_by(policy_category)
+
+policy_filered <- df_policy %>% 
+  filter(
+    policy_type %in% c("Relaxing", "Restricting"), 
+    policy_category %in% c("Authorization and enforcement", 
+                                "Face mask", 
+                                "Social distancing")
+    )
+```
+
+```{r policy_type_category_heatmap}
+policy_summary <- policy_filered %>% 
+  group_by(policy_type, policy_category) %>% 
+  summarise(count = n()) %>% 
+  mutate(count = scale(count))
+
+ggplot(data = policy_summary, 
+       mapping = aes(x = policy_type, 
+                     y = policy_category, 
+                     fill = count)) +
+  geom_tile()
+```
+
+```{r policy_category_subcategory_heatmap}
+policy_summary <- policy_filered %>% 
+  group_by(policy_category, policy_subcategory) %>% 
+  summarise(count = n()) %>% 
+  mutate(count = scale(count))
+
+ggplot(data = policy_summary, 
+       mapping = aes(x = policy_subcategory, 
+                     y = policy_category, 
+                     fill = count)) +
+  geom_tile() +
+  theme(
+    axis.text.x = element_text(angle = 90, 
+                               hjust = 1)
+  )
+```
+
+```{r policy_category_target_heatmap}
+policy_summary <- policy_filered %>% 
+  group_by(policy_category, policy_target) %>% 
+  summarise(count = n()) %>% 
+  mutate(count = scale(count))
+
+ggplot(data = policy_summary, 
+       mapping = aes(x = policy_target, 
+                     y = policy_category, 
+                     fill = count)) +
+  geom_tile() +
+  theme(
+    axis.text.x = element_text(angle = 90, 
+                               hjust = 1, 
+                               size = 1)
+  )
+```
+
+## Rstudio Session Information
+```{r, echo=FALSE}
+sessionInfo()  # could use devtools::session_info() if you prefer that
+```
