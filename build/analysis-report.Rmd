@@ -479,8 +479,7 @@ correlation_df <- model_df %>%
 ggcorr(correlation_df, 
        label = TRUE, label_round = 3, 
        hjust = 0.75)
-```
-
+```     
 
 ## Rstudio Session Information
 
